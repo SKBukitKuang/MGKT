@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Hawaii - Perlumbaan Pantai Tropika</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka untuk tajuk tropika & Plus Jakarta Sans untuk kebolehbacaan nama -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Konfigurasi Fon & Gaya Asas Hawaii */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(180deg, #0284c7 0%, #06b6d4 28%, #fde68a 28.5%, #fcd34d 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .font-tropical {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Animasi Ombak Laut & Elemen Pantai */
+        @keyframes waveMove {
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-25px) translateY(3px); }
+            100% { transform: translateX(0) translateY(0); }
+        }
+
+        @keyframes palmSway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(4deg); }
+        }
+
+        @keyframes racerBob {
+            0%, 100% { transform: translateY(0px) rotate(-4deg) scale(1); }
+            50% { transform: translateY(-5px) rotate(4deg) scale(1.05); }
+        }
+
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.85) translateY(15px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animate-wave {
+            animation: waveMove 5s ease-in-out infinite;
+        }
+
+        .animate-palm {
+            transform-origin: bottom center;
+            animation: palmSway 4s ease-in-out infinite;
+        }
+
+        .animate-float {
+            animation: floatGentle 3.5s ease-in-out infinite;
+        }
+
+        .animate-pop-in {
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Tekstur Pasir Pantai untuk 5 Barisan */
+        .sand-lane {
+            background-color: #fef3c7;
+            background-image: 
+                radial-gradient(#f59e0b 0.75px, transparent 0.75px),
+                radial-gradient(#d97706 0.65px, #fef3c7 0.65px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+        }
+
+        .sand-lane-alt {
+            background-color: #fde68a;
+            background-image: 
+                radial-gradient(#d97706 0.75px, transparent 0.75px),
+                radial-gradient(#b45309 0.65px, #fde68a 0.65px);
+            background-size: 24px 24px;
+            background-position: 6px 6px, 18px 18px;
+        }
+
+        /* Pembahagi Buluh Pantai antara Barisan */
+        .bamboo-divider {
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #a16207 0px,
+                #ca8a04 38px,
+                #713f12 39px,
+                #713f12 42px
+            );
+            box-shadow: 0 2px 4px rgba(113, 63, 18, 0.25);
+        }
+
+        /* Garisan Penamat Berkotak + Bunga Hawaii */
+        .finish-checker {
+            background-image: 
+                linear-gradient(45deg, #1e293b 25%, transparent 25%), 
+                linear-gradient(-45deg, #1e293b 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #1e293b 75%), 
+                linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+            background-color: #ffffff;
+        }
+
+        /* Pergerakan Peserta & Animasi Berlari */
+        .racer-entity {
+            position: absolute;
+            will-change: left, transform;
+            transition: top 0.3s ease;
+        }
+
+        .racer-running .fruit-sprite {
+            animation: racerBob 0.28s ease-in-out infinite;
+        }
+
+        /* Skrol Halus untuk Senarai Overlay */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(254, 243, 199, 0.6);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between">
+
+    <!-- ==================== BAHAGIAN ATAS: LANGIT, LAUT & PANEL KAWALAN ==================== -->
+    <header class="relative overflow-hidden bg-gradient-to-b from-sky-500 via-cyan-500 to-teal-400 text-white shadow-lg border-b-4 border-amber-300">
+        <!-- Hiasan Matahari & Awan Tropika -->
+        <div class="pointer-events-none absolute top-2 right-6 opacity-90 animate-float hidden sm:block">
+            <svg width="68" height="68" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="16" fill="#FDE047" stroke="#FACC15" stroke-width="3"/>
+                <g stroke="#FEF08A" stroke-width="3" stroke-linecap="round">
+                    <line x1="32" y1="4" x2="32" y2="11"/><line x1="32" y1="53" x2="32" y2="60"/>
+                    <line x1="4" y1="32" x2="11" y2="32"/><line x1="53" y1="32" x2="60" y2="32"/>
+                    <line x1="12" y1="12" x2="17" y2="17"/><line x1="47" y1="47" x2="52" y2="52"/>
+                    <line x1="52" y1="12" x2="47" y2="17"/><line x1="17" y1="47" x2="12" y2="52"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Hiasan Pokok Kelapa Kiri -->
+        <div class="pointer-events-none absolute -bottom-1 left-2 opacity-90 animate-palm hidden md:block">
+            <svg width="75" height="85" viewBox="0 0 80 90" fill="none">
+                <path d="M36 88 Q42 55 32 25" stroke="#92400E" stroke-width="7" stroke-linecap="round"/>
+                <path d="M32 25 C15 15, 5 25, 2 35 C15 30, 24 28, 32 25Z" fill="#16A34A"/>
+                <path d="M32 25 C20 5, 5 8, 2 18 C14 15, 24 19, 32 25Z" fill="#22C55E"/>
+                <path d="M32 25 C48 12, 62 20, 66 32 C54 27, 42 26, 32 25Z" fill="#15803D"/>
+                <path d="M32 25 C45 5, 60 8, 64 18 C52 16, 40 19, 32 25Z" fill="#4ADE80"/>
+                <circle cx="29" cy="29" r="3.5" fill="#78350F"/><circle cx="36" cy="29" r="3.5" fill="#78350F"/>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                
+                <!-- Jenama & Ikon Pantai -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-300 border-2 border-white shadow-md flex items-center justify-center text-2xl shrink-0">
+                            🌺
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-tropical text-2xl sm:text-3xl font-bold tracking-wide text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.25)]">
+                                    RACE HAWAII
+                                </h1>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-300 text-amber-950 shadow-sm">
+                                    5 BARISAN • 15 LEVEL
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-cyan-50 font-medium">
+                                Perlumbaan Buah Tropika • Top 8 Pemenang Setiap Pusingan
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Butang Bunyi Mudah Alih -->
+                    <button id="btnSoundMobile" onclick="toggleSound()" title="Hidup/Matikan Bunyi"
+                        class="lg:hidden p-2.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 transition active:scale-95">
+                        <span class="sound-icon text-lg">🔊</span>
+                    </button>
+                </div>
+
+                <!-- Statistik Langsung & Kawalan Utama -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                    
+                    <!-- Kad Status Pusingan & Baki -->
+                    <div class="flex items-center gap-2 bg-slate-900/30 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/25 text-xs sm:text-sm">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase tracking-wider text-cyan-100 font-bold">Pusingan / Level</span>
+                            <span id="statRound" class="font-tropical text-base sm:text-lg font-bold text-amber-300 leading-tight">1 / 15</span>
+                        </div>
+                        <div class="h-7 w-px bg-white/25 mx-1"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase tracking-wider text-cyan-100 font-bold">Baki Peserta</span>
+                            <span id="statRemaining" class="font-tropical text-base sm:text-lg font-bold text-white leading-tight">0</span>
+                        </div>
+                        <div class="h-7 w-px bg-white/25 mx-1"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase tracking-wider text-cyan-100 font-bold">Sudah Menang</span>
+                            <span id="statWinnersCount" class="font-tropical text-base sm:text-lg font-bold text-emerald-300 leading-tight">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Pemilih Kelajuan: 1x, 2x, 4x -->
+                    <div class="flex items-center bg-slate-900/35 backdrop-blur-md p-1 rounded-2xl border border-white/25" role="group" aria-label="Kawalan Kelajuan">
+                        <span class="text-[11px] font-bold uppercase tracking-wider px-2 text-cyan-100 hidden sm:inline">Laju:</span>
+                        <button onclick="setSpeed(1)" id="speed-1"
+                            class="speed-btn px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition bg-amber-400 text-amber-950 shadow">
+                            1x
+                        </button>
+                        <button onclick="setSpeed(2)" id="speed-2"
+                            class="speed-btn px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition text-white hover:bg-white/15">
+                            2x
+                        </button>
+                        <button onclick="setSpeed(4)" id="speed-4"
+                            class="speed-btn px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition text-white hover:bg-white/15">
+                            4x
+                        </button>
+                    </div>
+
+                    <!-- Butang Input Nama Pukal -->
+                    <button onclick="openBulkModal()" id="btnOpenBulk"
+                        class="px-3.5 py-2 rounded-2xl bg-white text-sky-900 hover:bg-amber-50 font-bold text-xs sm:text-sm shadow-md border-2 border-amber-300 flex items-center gap-1.5 transition active:scale-95">
+                        <span>📋</span>
+                        <span>Masukkan Nama</span>
+                    </button>
+
+                    <!-- Butang Rekod Semua Pemenang -->
+                    <button onclick="openAllWinnersOverlay()"
+                        class="px-3.5 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs sm:text-sm shadow-md border-2 border-emerald-200 flex items-center gap-1.5 transition active:scale-95">
+                        <span>🏆</span>
+                        <span class="hidden sm:inline">Senarai Pemenang</span>
+                        <span class="sm:hidden">Pemenang</span>
+                    </button>
+
+                    <!-- Butang Bunyi Desktop -->
+                    <button id="btnSoundDesktop" onclick="toggleSound()" title="Hidup/Matikan Bunyi"
+                        class="hidden lg:flex p-2.5 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 transition active:scale-95">
+                        <span class="sound-icon text-base">🔊</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ombak Buih Laut di Bawah Header -->
+        <div class="w-full overflow-hidden leading-none">
+            <svg class="relative block w-[110%] -left-[5%] h-4 sm:h-5 animate-wave" viewBox="0 0 1200 40" preserveAspectRatio="none">
+                <path d="M0,20 C150,45 350,0 600,20 C850,40 1050,5 1200,20 L1200,40 L0,40 Z" fill="#fef3c7" fill-opacity="0.95"></path>
+                <path d="M0,28 C200,10 400,42 600,25 C800,8 1000,38 1200,22 L1200,40 L0,40 Z" fill="#fde68a"></path>
+            </svg>
+        </div>
+    </header>
+
+    <!-- ==================== KAWASAN UTAMA: TREK PANTAI 5 BARISAN & 15 LEVEL ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-5 py-3 flex flex-col gap-3">
+
+        <!-- Bar Info & Butang Mula Perlumbaan -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 shadow-md border-2 border-amber-300 flex flex-col md:flex-row items-center justify-between gap-2.5">
+            
+            <!-- Petunjuk Langsung / Pendahulu Semasa -->
+            <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                <span class="px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-extrabold text-xs shrink-0 border border-amber-300">
+                    🏄‍♂️ TOP 8 SEMASA:
+                </span>
+                <div id="liveTopTicker" class="flex items-center gap-1.5 text-xs font-bold text-slate-600 whitespace-nowrap">
+                    <span class="italic text-slate-400">Tekan "MULA PERLUMBAAN" untuk berlumba...</span>
+                </div>
+            </div>
+
+            <!-- Butang Tindakan Utama -->
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end shrink-0">
+                <button onclick="resetEntireTournament()" id="btnResetAll"
+                    class="px-3.5 py-2.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold text-xs sm:text-sm border border-rose-300 transition active:scale-95">
+                    🔄 Reset Semua
+                </button>
+                <button onclick="startRace()" id="btnStartRace"
+                    class="flex-1 md:flex-initial px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:from-orange-600 hover:to-amber-500 text-white font-tropical text-base sm:text-lg font-bold tracking-wide shadow-lg shadow-orange-500/30 border-2 border-white flex items-center justify-center gap-2 transition transform active:scale-95">
+                    <span>🏁</span>
+                    <span id="btnStartText">MULA PERLUMBAAN</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Kontena Trek Pantai (5 Barisan x 15 Level) -->
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-amber-600/80 bg-amber-200">
+            
+            <!-- Header Penanda 15 Level di Bahagian Atas Trek -->
+            <div class="bg-gradient-to-r from-amber-700 via-amber-600 to-orange-700 text-white flex items-center border-b-2 border-amber-900">
+                <!-- Label Lajur Kiri (Barisan) -->
+                <div class="w-14 sm:w-20 shrink-0 py-2 px-1 text-center font-tropical text-[11px] sm:text-xs font-bold bg-amber-900/50 border-r border-amber-500/40">
+                    BARISAN
+                </div>
+                
+                <!-- 15 Penanda Level (Lv.1 hingga Lv.15) -->
+                <div id="levelHeaderGrid" class="flex-1 grid grid-cols-15 text-center py-1.5 relative" style="grid-template-columns: repeat(15, minmax(0, 1fr));">
+                    <!-- Dijana secara automatik oleh JS (Level 1 - Level 15) -->
+                </div>
+
+                <!-- Label Penamat Kanan -->
+                <div class="w-12 sm:w-16 shrink-0 py-2 px-1 text-center font-tropical text-[11px] sm:text-xs font-bold bg-emerald-700 border-l border-amber-400">
+                    TAMAT
+                </div>
+            </div>
+
+            <!-- 5 Barisan Perlumbaan (Lanes 1 - 5) -->
+            <div id="raceTrackContainer" class="relative flex flex-col">
+                <!-- 5 Barisan akan dijana secara dinamik di sini -->
+            </div>
+
+            <!-- Footer Hiasan Pantai Bawah Trek (Ikon Pantai Hawaii) -->
+            <div class="bg-gradient-to-r from-cyan-600 via-teal-500 to-cyan-600 text-white px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold border-t-4 border-amber-400">
+                <div class="flex items-center gap-3">
+                    <span>🌴 Pantai Waikiki</span>
+                    <span>🐚 5 Barisan Pasir</span>
+                    <span>🍍 10 Jenis Buah</span>
+                    <span>⭐ 15 Tahap (Level)</span>
+                </div>
+                <div class="flex items-center gap-2 text-amber-200 font-bold">
+                    <span>🏄‍♀️ Papan Luncur</span>
+                    <span>•</span>
+                    <span>🍹 Kelapa Muda</span>
+                    <span>•</span>
+                    <span>🗿 Tiki Hawaii</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legenda 10 Jenis Buah Tropika -->
+        <div class="bg-white/85 backdrop-blur-sm rounded-2xl p-2.5 shadow border border-amber-300 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-extrabold text-amber-900 uppercase tracking-wider px-2">
+                🍉 10 Ikon Buah Hawaii:
+            </span>
+            <div id="fruitLegend" class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <!-- Dijana oleh JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== MODAL 1: INPUT NAMA SECARA PUKAL (BULK) ==================== -->
+    <div id="bulkModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/65 backdrop-blur-sm p-3 sm:p-5">
+        <div class="bg-gradient-to-b from-amber-50 to-white w-full max-w-xl rounded-3xl shadow-2xl border-4 border-amber-400 overflow-hidden animate-pop-in">
+            <!-- Header Modal -->
+            <div class="bg-gradient-to-r from-sky-500 to-teal-500 text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🌺</span>
+                    <div>
+                        <h2 class="font-tropical text-xl font-bold">Masukkan Senarai Nama (Bulk)</h2>
+                        <p class="text-xs text-cyan-100">Setiap nama akan mendapat ikon buah Hawaii & berlumba di 5 barisan</p>
+                    </div>
+                </div>
+                <button onclick="closeBulkModal()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold text-lg transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Badan Modal -->
+            <div class="p-5 flex flex-col gap-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <label for="bulkNamesInput" class="text-xs sm:text-sm font-bold text-slate-700">
+                        Tampal atau taip nama (satu nama setiap baris atau dipisahkan koma):
+                    </label>
+                    <span id="bulkLineCount" class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-extrabold">
+                        0 nama dikesan
+                    </span>
+                </div>
+
+                <textarea id="bulkNamesInput" rows="8"
+                    placeholder="Contoh:&#10;Ahmad Zulkifli&#10;Siti Nurhaliza&#10;Tan Wei Ming&#10;Priya Devi&#10;Hafiz Roslan..."
+                    class="w-full rounded-2xl border-2 border-amber-300 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 p-3.5 text-sm font-semibold text-slate-800 bg-white outline-none transition"></textarea>
+
+                <!-- Butang Contoh Pantas -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-500">Isi Pantas:</span>
+                    <button type="button" onclick="fillSampleNames(20)" class="px-2.5 py-1 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 text-xs font-bold transition">
+                        + 20 Nama Contoh
+                    </button>
+                    <button type="button" onclick="fillSampleNames(45)" class="px-2.5 py-1 rounded-xl bg-teal-100 hover:bg-teal-200 text-teal-800 text-xs font-bold transition">
+                        + 45 Nama Contoh
+                    </button>
+                    <button type="button" onclick="fillSampleNames(80)" class="px-2.5 py-1 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold transition">
+                        + 80 Nama Contoh
+                    </button>
+                    <button type="button" onclick="clearBulkTextarea()" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition ml-auto">
+                        Padam Teks
+                    </button>
+                </div>
+
+                <div class="bg-amber-100/80 border border-amber-300 rounded-2xl p-3 text-xs text-amber-950 flex items-start gap-2">
+                    <span class="text-base">💡</span>
+                    <p>
+                        Setiap pusingan memilih <strong>8 pemenang</strong> dan secara automatik menolak mereka daripada pusingan seterusnya. Jika baki nama habis sebelum mencapai <strong>Level 15</strong>, perlumbaan dikira tamat serta-merta.
+                    </p>
+                </div>
+
+                <!-- Butang Simpan -->
+                <div class="flex items-center justify-end gap-2.5 pt-1">
+                    <button onclick="closeBulkModal()" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-sm transition">
+                        Batal
+                    </button>
+                    <button onclick="applyBulkNames()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white font-tropical font-bold text-base shadow-lg transition active:scale-95">
+                        🏄‍♂️ Muatkan Peserta ke Trek
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: OVERLAY SENARAI 8 PEMENANG PUSINGAN & TAMAT ==================== -->
+    <div id="winnerOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/75 backdrop-blur-md p-3 sm:p-5">
+        <div class="bg-gradient-to-b from-amber-50 via-white to-amber-50 w-full max-w-2xl rounded-3xl shadow-2xl border-4 border-amber-400 overflow-hidden animate-pop-in flex flex-col max-h-[92vh]">
+            
+            <!-- Banner Atas Overlay -->
+            <div id="overlayHeaderBanner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white px-5 py-4 text-center relative overflow-hidden">
+                <div class="text-3xl mb-1" id="overlayEmoji">🏆🌺🏆</div>
+                <h2 id="overlayTitle" class="font-tropical text-2xl sm:text-3xl font-bold drop-shadow">
+                    PEMENANG PUSINGAN 1!
+                </h2>
+                <p id="overlaySubtitle" class="text-xs sm:text-sm text-amber-100 font-semibold mt-0.5">
+                    8 pemenang ini telah ditolak daripada senarai pusingan seterusnya.
+                </p>
+            </div>
+
+            <!-- Notis Status Baki / Tamat Awal Sebelum Level 15 -->
+            <div id="overlayStatusAlert" class="mx-4 sm:mx-6 mt-4 rounded-2xl p-3 text-xs sm:text-sm font-bold flex items-center justify-between gap-2 bg-sky-100 text-sky-900 border border-sky-300">
+                <span id="overlayStatusText">Baki peserta untuk pusingan seterusnya: 0 orang</span>
+                <span id="overlayRoundBadge" class="px-2.5 py-1 rounded-xl bg-white text-sky-900 font-extrabold shrink-0 shadow-sm">
+                    Level 1 / 15
+                </span>
+            </div>
+
+            <!-- Senarai 8 Pemenang Pusingan Ini (Boleh Skrol) -->
+            <div class="p-4 sm:px-6 overflow-y-auto flex-1">
+                <div class="flex items-center justify-between mb-2.5">
+                    <h3 id="overlayListHeading" class="font-tropical text-base sm:text-lg font-bold text-slate-800">
+                        🍍 Senarai Pemenang Pusingan Ini:
+                    </h3>
+                    <button onclick="copyWinnersToClipboard()" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-extrabold border border-amber-300 flex items-center gap-1 transition active:scale-95">
+                        <span>📋</span>
+                        <span>Salin Senarai</span>
+                    </button>
+                </div>
+
+                <div id="overlayWinnersGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <!-- Kad 8 Pemenang Dijana Oleh JS -->
+                </div>
+            </div>
+
+            <!-- Butang Kawalan Bawah Overlay -->
+            <div class="bg-amber-100/90 px-5 py-3.5 border-t-2 border-amber-300 flex flex-wrap items-center justify-between gap-2.5">
+                <button onclick="openAllWinnersOverlay()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-amber-50 text-amber-900 font-bold text-xs sm:text-sm border-2 border-amber-300 transition">
+                    📜 Lihat Semua Pemenang (<span id="overlayTotalWinnersBtn">0</span>)
+                </button>
+
+                <div class="flex items-center gap-2 ml-auto">
+                    <button id="btnNextRound" onclick="proceedToNextRound()"
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-tropical text-base font-bold shadow-lg flex items-center gap-2 transition active:scale-95">
+                        <span>➡️</span>
+                        <span>Pusingan Seterusnya</span>
+                    </button>
+
+                    <button id="btnFinishRestart" onclick="closeWinnerOverlay()"
+                        class="hidden px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-tropical text-base font-bold shadow-lg transition active:scale-95">
+                        ✅ Tutup & Lihat Trek
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: REKOD KUMULATIF SEMUA PEMENANG ==================== -->
+    <div id="allWinnersModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/75 backdrop-blur-sm p-3 sm:p-5">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border-4 border-emerald-400 overflow-hidden animate-pop-in flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🏆</span>
+                    <div>
+                        <h2 class="font-tropical text-xl font-bold">Rekod Keseluruhan Pemenang</h2>
+                        <p class="text-xs text-emerald-100">Semua nama di bawah telah ditolak daripada pusingan berikutnya</p>
+                    </div>
+                </div>
+                <button onclick="closeAllWinnersOverlay()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center font-bold text-lg">
+                    ✕
+                </button>
+            </div>
+
+            <div id="allWinnersContent" class="p-5 overflow-y-auto flex-1 space-y-4">
+                <!-- Senarai Pemenang Mengikut Pusingan -->
+            </div>
+
+            <div class="bg-slate-50 px-5 py-3.5 border-t border-slate-200 flex items-center justify-between gap-2">
+                <button onclick="copyAllWinnersCumulative()" class="px-4 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold text-xs sm:text-sm border border-emerald-300 flex items-center gap-1.5 transition">
+                    <span>📋</span>
+                    <span>Salin Semua Pemenang</span>
+                </button>
+                <button onclick="closeAllWinnersOverlay()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifikasi Ringkas (Ganti alert()) -->
+    <div id="toastNotification" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] hidden items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-xl border border-amber-400 text-xs sm:text-sm font-bold">
+        <span id="toastIcon">🌺</span>
+        <span id="toastMessage">Mesej notifikasi</span>
+    </div>
+
+    <!-- ==================== SKRIP LOGIK PERMAINAN & ANIMASI ==================== -->
+    <script>
+        /**
+         * KONFIGURASI UTAMA RACE HAWAII
+         * - 5 Barisan (LANES = 5)
+         * - 15 Level pada trek & maksimum 15 Pusingan (MAX_LEVELS = 15)
+         * - 10 Jenis Buah Tropika (FRUITS)
+         * - 8 Pemenang setiap pusingan (WINNERS_PER_ROUND = 8)
+         */
+        const NUM_LANES = 5;
+        const MAX_LEVELS = 15;
+        const WINNERS_PER_ROUND = 8;
+
+        // 10 Jenis Buah Hawaii dengan Ikon SVG Khusus & Warna Tema
+        const HAWAII_FRUITS = [
+            {
+                id: 'nanas',
+                name: 'Nanas',
+                bg: 'bg-amber-100 border-amber-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M20 3 L15 11 L20 9 L25 11 Z" fill="#16A34A"/><path d="M13 6 L16 13 L20 11 L24 13 L27 6 L20 10 Z" fill="#22C55E"/><ellipse cx="20" cy="24" rx="10" ry="12" fill="#FACC15" stroke="#CA8A04" stroke-width="1.5"/><path d="M13 19 L27 29 M27 19 L13 29 M11 24 L29 24" stroke="#D97706" stroke-width="1.2"/></svg>`
+            },
+            {
+                id: 'kelapa',
+                name: 'Kelapa',
+                bg: 'bg-stone-100 border-amber-700',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M24 12 L31 4" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="23" r="12" fill="#78350F" stroke="#451A03" stroke-width="1.5"/><path d="M11 19 Q20 25 29 19" fill="#FEF3C7"/><circle cx="17" cy="25" r="1.2" fill="#451A03"/><circle cx="23" cy="25" r="1.2" fill="#451A03"/></svg>`
+            },
+            {
+                id: 'tembikai',
+                name: 'Tembikai',
+                bg: 'bg-rose-100 border-rose-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M6 16 A14 14 0 0 0 34 16 Z" fill="#16A34A"/><path d="M8.5 16 A11.5 11.5 0 0 0 31.5 16 Z" fill="#F43F5E"/><circle cx="15" cy="20" r="1" fill="#1E293B"/><circle cx="20" cy="23" r="1" fill="#1E293B"/><circle cx="25" cy="20" r="1" fill="#1E293B"/></svg>`
+            },
+            {
+                id: 'mangga',
+                name: 'Mangga',
+                bg: 'bg-orange-100 border-orange-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M22 8 C28 6, 32 10, 27 13 C24 14, 21 11, 22 8 Z" fill="#22C55E"/><path d="M21 10 C11 11, 9 24, 15 31 C21 37, 31 30, 30 20 C29 13, 25 10, 21 10 Z" fill="#FB923C" stroke="#EA580C" stroke-width="1.5"/><circle cx="17" cy="18" r="2.5" fill="#FDE047" opacity="0.7"/></svg>`
+            },
+            {
+                id: 'pisang',
+                name: 'Pisang',
+                bg: 'bg-yellow-100 border-yellow-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M11 10 C10 22, 18 32, 31 29 C24 27, 17 20, 15 10 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="1.5"/><path d="M13 8 L15 11" stroke="#713F12" stroke-width="2.5" stroke-linecap="round"/></svg>`
+            },
+            {
+                id: 'strawberi',
+                name: 'Strawberi',
+                bg: 'bg-red-100 border-red-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M12 13 C12 24, 17 33, 20 34 C23 33, 28 24, 28 13 C24 11, 16 11, 12 13 Z" fill="#EF4444" stroke="#B91C1C" stroke-width="1.5"/><path d="M13 12 L20 15 L27 12 L23 9 L20 11 L17 9 Z" fill="#22C55E"/><circle cx="17" cy="19" r="0.9" fill="#FEF08A"/><circle cx="23" cy="19" r="0.9" fill="#FEF08A"/><circle cx="20" cy="24" r="0.9" fill="#FEF08A"/></svg>`
+            },
+            {
+                id: 'kiwi',
+                name: 'Kiwi',
+                bg: 'bg-lime-100 border-lime-500',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="21" r="12" fill="#84CC16" stroke="#78350F" stroke-width="2.5"/><circle cx="20" cy="21" r="4.5" fill="#ECFCCB"/><circle cx="20" cy="14" r="0.9" fill="#1E293B"/><circle cx="20" cy="28" r="0.9" fill="#1E293B"/><circle cx="13" cy="21" r="0.9" fill="#1E293B"/><circle cx="27" cy="21" r="0.9" fill="#1E293B"/></svg>`
+            },
+            {
+                id: 'oren',
+                name: 'Oren',
+                bg: 'bg-orange-100 border-orange-500',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="22" r="11.5" fill="#F97316" stroke="#C2410C" stroke-width="1.5"/><path d="M20 10 C23 6, 28 7, 26 11 Z" fill="#16A34A"/><circle cx="16" cy="18" r="1.5" fill="#FDBA74"/></svg>`
+            },
+            {
+                id: 'anggur',
+                name: 'Anggur',
+                bg: 'bg-purple-100 border-purple-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><path d="M20 7 L20 12" stroke="#15803D" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="16" r="4" fill="#9333EA"/><circle cx="24" cy="16" r="4" fill="#A855F7"/><circle cx="14" cy="22" r="4" fill="#7E22CE"/><circle cx="20" cy="22" r="4" fill="#9333EA"/><circle cx="26" cy="22" r="4" fill="#7E22CE"/><circle cx="17" cy="28" r="4" fill="#A855F7"/><circle cx="23" cy="28" r="4" fill="#9333EA"/><circle cx="20" cy="33" r="3.8" fill="#7E22CE"/></svg>`
+            },
+            {
+                id: 'naga',
+                name: 'Buah Naga',
+                bg: 'bg-pink-100 border-pink-400',
+                svg: `<svg viewBox="0 0 40 40" class="w-full h-full"><ellipse cx="20" cy="22" rx="10.5" ry="12" fill="#EC4899" stroke="#BE185D" stroke-width="1.5"/><ellipse cx="20" cy="22" rx="7" ry="8.5" fill="#FDF2F8"/><path d="M12 13 L9 9 M28 13 L31 9 M20 10 L20 6" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round"/><circle cx="18" cy="20" r="0.9" fill="#1E293B"/><circle cx="22" cy="23" r="0.9" fill="#1E293B"/><circle cx="19" cy="26" r="0.9" fill="#1E293B"/></svg>`
+            }
+        ];
+
+        // Senarai Nama Contoh untuk Ujian Pantas
+        const SAMPLE_POOL = [
+            "Aiman Hakim", "Nurul Izzah", "Daniel Tan", "Kavitha Raj", "Farah Nabilah",
+            "Syafiq Kyle", "Mei Ling", "Ariff Zulkifli", "Siti Sarah", "Darren Lim",
+            "Hafiz Mahamad", "Aina Abdul", "Kumaravel", "Zulaikha", "Amirul Asyraf",
+            "Chloe Wong", "Irfan Haris", "Nadia Brian", "Suresh Menon", "Puteri Aishah",
+            "Khairul Aming", "Sofyank", "Alif Satar", "Bella Astillah", "Fattah Amin",
+            "Hannah Delisha", "Nabil Ahmad", "Janna Nick", "Zizan Razak", "Mira Filzah",
+            "Ryan Bakery", "Iman Troye", "Aedy Ashraf", "Daiyan Trisha", "Ben Amir",
+            "Ruhainies", "Hun Haqeem", "Scha Alyahya", "Awal Ashaari", "Neelofa",
+            "Hairul Azreen", "Hanis Zalikha", "Remy Ishak", "Tiz Zaqyah", "beto Kusyairy",
+            "Nabila Huda", "Bront Palarae", "Lisa Surihani", "Yusry KRU", "Erra Fazira",
+            "Faizal Tahir", "Dayang Nurfaizah", "Hael Husaini", "Wany Hasrita", "Khai Bahar",
+            "Ernie Zakri", "Syamel", "Marsha Milan", "Stacy Anam", "Akim Ahmad",
+            "Noh Salleh", "Bunkface Sam", "Joe Flizzow", "SonaOne", "Yonnyboii",
+            "MK K-Clique", "Tuju", "Loca B", "Dollla Sabronzo", "Tabby Dolla",
+            "Angel Dolla", "Syasya", "Ismail Izzani", "Naim Daniel", "Haqiem Rusli",
+            "Tajul Ariff", "Aepul Roza", "Tomok", "Black Hanifah", "Hazama"
+        ];
+
+        // ==================== KEADAAN APLIKASI (STATE) ====================
+        let state = {
+            participants: [],       // Semua peserta: { id, name, fruitIdx, lane, progress, level, subOffset, roundRank, wonRound, isEliminated }
+            currentRound: 1,        // Pusingan semasa (1 hingga 15)
+            speedMultiplier: 1,     // 1x, 2x, 4x
+            raceStatus: 'IDLE',     // 'IDLE' | 'RACING' | 'ROUND_OVER' | 'TOURNAMENT_OVER'
+            currentRoundWinners: [],// Pemenang dalam pusingan semasa (maksimum 8)
+            allWinnersHistory: [],  // Rekod setiap pusingan: [{ round, winners: [...] }]
+            tournamentEndReason: '',// 'NO_NAMES_LEFT' | 'MAX_LEVEL_15'
+            soundEnabled: true,
+            lastFrameTime: 0,
+            animFrameId: null
+        };
+
+        // ==================== PENJANA BUNYI TROPIKA (WEB AUDIO API) ====================
+        let audioCtx = null;
+
+        function playTone(freq, type = 'sine', duration = 0.12, volume = 0.08) {
+            if (!state.soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Abaikan jika pelayar menyekat audio sebelum interaksi
+            }
+        }
+
+        function playStartFanfare() {
+            [523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
+                setTimeout(() => playTone(f, 'triangle', 0.18, 0.1), idx * 75);
+            });
+        }
+
+        function playWinnerChime(rank) {
+            const base = 587.33 + (8 - rank) * 40;
+            playTone(base, 'sine', 0.15, 0.09);
+            setTimeout(() => playTone(base * 1.25, 'triangle', 0.22, 0.09), 70);
+        }
+
+        function playRoundCompleteSound() {
+            [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, idx) => {
+                setTimeout(() => playTone(f, 'triangle', 0.28, 0.11), idx * 90);
+            });
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            document.querySelectorAll('.sound-icon').forEach(el => {
+                el.textContent = state.soundEnabled ? '🔊' : '🔇';
+            });
+            showToast(state.soundEnabled ? '🔊 Kesan bunyi dihidupkan' : '🔇 Kesan bunyi dimatikan');
+        }
+
+        // ==================== INISIALISASI ANTARA MUKA TREK ====================
+        function initTrackUI() {
+            // 1. Bina Header 15 Level (Lv.1 hingga Lv.15)
+            const levelHeaderGrid = document.getElementById('levelHeaderGrid');
+            levelHeaderGrid.innerHTML = '';
+            for (let lvl = 1; lvl <= MAX_LEVELS; lvl++) {
+                const cell = document.createElement('div');
+                cell.className = `text-[10px] sm:text-xs font-extrabold border-l border-amber-400/30 py-0.5 flex flex-col items-center justify-center ${lvl === 15 ? 'bg-amber-400 text-amber-950' : ''}`;
+                cell.innerHTML = `<span>L${lvl}</span>`;
+                levelHeaderGrid.appendChild(cell);
+            }
+
+            // 2. Bina 5 Barisan Perlumbaan
+            const trackContainer = document.getElementById('raceTrackContainer');
+            trackContainer.innerHTML = '';
+
+            const beachDecorIcons = ['🐚', '🦀', '⭐', '🌺', '🐢'];
+
+            for (let lane = 0; lane < NUM_LANES; lane++) {
+                const laneRow = document.createElement('div');
+                laneRow.className = `relative flex items-stretch h-24 sm:h-28 ${lane % 2 === 0 ? 'sand-lane' : 'sand-lane-alt'}`;
+
+                // Label Barisan Kiri
+                const laneLabel = document.createElement('div');
+                laneLabel.className = 'w-14 sm:w-20 shrink-0 bg-amber-800/15 border-r-2 border-amber-700/30 flex flex-col items-center justify-center p-1 z-10';
+                laneLabel.innerHTML = `
+                    <span class="text-base sm:text-lg">${beachDecorIcons[lane]}</span>
+                    <span class="font-tropical text-[11px] sm:text-xs font-bold text-amber-950">Baris ${lane + 1}</span>
+                `;
+
+                // Kawasan Larian 15 Level
+                const laneTrackArea = document.createElement('div');
+                laneTrackArea.id = `lane-track-${lane}`;
+                laneTrackArea.className = 'flex-1 relative overflow-visible';
+
+                // Garisan Grid Menegak untuk 15 Level
+                const gridOverlay = document.createElement('div');
+                gridOverlay.className = 'absolute inset-0 grid pointer-events-none';
+                gridOverlay.style.gridTemplateColumns = 'repeat(15, minmax(0, 1fr))';
+                for (let lvl = 1; lvl <= MAX_LEVELS; lvl++) {
+                    const stepCol = document.createElement('div');
+                    stepCol.className = `border-l border-dashed ${lvl === 15 ? 'border-emerald-600/60 bg-emerald-400/10' : 'border-amber-700/20'} h-full relative`;
+                    // Hiasan cangkerang kecil di setiap level ke-5
+                    if (lvl % 5 === 0 && lvl < 15) {
+                        stepCol.innerHTML = `<span class="absolute bottom-1 right-1 text-[10px] opacity-35">🐚</span>`;
+                    }
+                    gridOverlay.appendChild(stepCol);
+                }
+                laneTrackArea.appendChild(gridOverlay);
+
+                // Kontena Peserta dalam Barisan Ini
+                const racersHolder = document.createElement('div');
+                racersHolder.id = `lane-racers-${lane}`;
+                racersHolder.className = 'absolute inset-0 z-20';
+                laneTrackArea.appendChild(racersHolder);
+
+                // Garisan Penamat Kanan
+                const finishCol = document.createElement('div');
+                finishCol.className = 'w-12 sm:w-16 shrink-0 finish-checker border-l-4 border-rose-600 flex items-center justify-center relative z-10';
+                finishCol.innerHTML = `<span class="bg-white/90 px-1.5 py-0.5 rounded-lg text-[10px] font-extrabold text-rose-700 shadow">🌺FIN</span>`;
+
+                laneRow.appendChild(laneLabel);
+                laneRow.appendChild(laneTrackArea);
+                laneRow.appendChild(finishCol);
+                trackContainer.appendChild(laneRow);
+
+                // Pembahagi Buluh Pantai antara Barisan
+                if (lane < NUM_LANES - 1) {
+                    const bamboo = document.createElement('div');
+                    bamboo.className = 'bamboo-divider w-full';
+                    trackContainer.appendChild(bamboo);
+                }
+            }
+
+            // 3. Bina Legenda 10 Jenis Buah
+            const legendContainer = document.getElementById('fruitLegend');
+            legendContainer.innerHTML = HAWAII_FRUITS.map(f => `
+                <div class="flex items-center gap-1 px-2 py-0.5 rounded-full border ${f.bg} text-[11px] font-bold text-slate-800 shadow-2xs">
+                    <div class="w-4 h-4 shrink-0">${f.svg}</div>
+                    <span>${f.name}</span>
+                </div>
+            `).join('');
+        }
+
+        // ==================== PENGURUSAN PESERTA & BULK INPUT ====================
+        function parseNamesFromText(rawText) {
+            return rawText
+                .split(/[\n,;]+/)
+                .map(n => n.trim())
+                .filter(n => n.length > 0);
+        }
+
+        function loadParticipants(namesList) {
+            if (!namesList || namesList.length === 0) {
+                showToast('⚠️ Sila masukkan sekurang-kurangnya 1 nama!');
+                return;
+            }
+
+            // Hentikan animasi sedia ada
+            if (state.animFrameId) {
+                cancelAnimationFrame(state.animFrameId);
+                state.animFrameId = null;
+            }
+
+            // Agihkan peserta ke dalam 5 barisan & 10 jenis buah
+            state.participants = namesList.map((name, idx) => {
+                const lane = idx % NUM_LANES;
+                const fruitIdx = idx % HAWAII_FRUITS.length;
+                return {
+                    id: `racer-${idx}-${Date.now()}`,
+                    name: name,
+                    fruitIdx: fruitIdx,
+                    lane: lane,
+                    progress: 0,        // 0.0 hingga 15.0 (mewakili 15 Level)
+                    level: 1,           // Level semasa (1 hingga 15)
+                    subOffset: 0,       // Kedudukan menegak dalam barisan supaya nama jelas
+                    speed: 1,
+                    burstTimer: 0,
+                    roundRank: null,    // Kedudukan 1 - 8 dalam pusingan semasa
+                    wonRound: null,     // Pusingan ke berapa peserta ini menang
+                    isEliminated: false // True jika sudah menang (ditolak dari round seterusnya)
+                };
+            });
+
+            state.currentRound = 1;
+            state.raceStatus = 'IDLE';
+            state.currentRoundWinners = [];
+            state.allWinnersHistory = [];
+            state.tournamentEndReason = '';
+
+            prepareRoundPositions();
+            updateHUDStats();
+            renderRacersOnTrack();
+            updateStartButtonUI();
+        }
+
+        /**
+         * Susun semula baki peserta yang belum menang pada garisan permulaan
+         * dan agihkan secara seimbang ke dalam 5 barisan.
+         */
+        function prepareRoundPositions() {
+            const activeRacers = state.participants.filter(p => !p.isEliminated);
+            
+            // Kira bilangan peserta setiap barisan untuk mengira subOffset menegak yang kemas
+            const laneCounts = [0, 0, 0, 0, 0];
+
+            activeRacers.forEach((racer, idx) => {
+                const assignedLane = idx % NUM_LANES;
+                racer.lane = assignedLane;
+                racer.progress = 0;
+                racer.level = 1;
+                racer.roundRank = null;
+                racer.speed = 1.4 + Math.random() * 1.4;
+                racer.burstTimer = 0.2 + Math.random() * 0.5;
+                racer.slotInLane = laneCounts[assignedLane];
+                laneCounts[assignedLane]++;
+            });
+
+            // Tetapkan subOffset menegak (18% hingga 72% tinggi barisan) agar label nama di atas ikon tidak bertindih teruk
+            activeRacers.forEach(racer => {
+                const totalInLane = laneCounts[racer.lane];
+                if (totalInLane <= 1) {
+                    racer.subOffset = 46;
+                } else {
+                    const step = 52 / Math.min(totalInLane - 1, 6);
+                    const patternIdx = racer.slotInLane % 7;
+                    racer.subOffset = 20 + (patternIdx * step);
+                }
+            });
+        }
+
+        function renderRacersOnTrack() {
+            // Kosongkan semua kontena barisan
+            for (let l = 0; l < NUM_LANES; l++) {
+                const holder = document.getElementById(`lane-racers-${l}`);
+                if (holder) holder.innerHTML = '';
+            }
+
+            const activeRacers = state.participants.filter(p => !p.isEliminated);
+
+            activeRacers.forEach(racer => {
+                const holder = document.getElementById(`lane-racers-${racer.lane}`);
+                if (!holder) return;
+
+                const fruit = HAWAII_FRUITS[racer.fruitIdx];
+                const el = document.createElement('div');
+                el.id = `dom-${racer.id}`;
+                el.className = 'racer-entity flex flex-col items-center -translate-x-1/2 -translate-y-1/2 transition-shadow';
+                el.style.left = `${(racer.progress / MAX_LEVELS) * 94 + 3}%`;
+                el.style.top = `${racer.subOffset}%`;
+                el.style.zIndex = racer.roundRank ? (50 - racer.roundRank) : 20;
+
+                el.innerHTML = `
+                    <!-- Nama Peserta di Atas Ikon Buah -->
+                    <div class="mb-0.5 px-1.5 py-0.2 rounded-full bg-white/95 border border-slate-300 shadow-sm flex items-center gap-1 max-w-[95px] sm:max-w-[115px]">
+                        <span id="badge-${racer.id}" class="text-[9px] font-extrabold px-1 rounded bg-amber-200 text-amber-950 shrink-0">
+                            L${racer.level}
+                        </span>
+                        <span class="text-[10px] sm:text-[11px] font-extrabold text-slate-900 truncate leading-tight" title="${escapeHtml(racer.name)}">
+                            ${escapeHtml(racer.name)}
+                        </span>
+                    </div>
+                    <!-- Ikon Buah Hawaii -->
+                    <div class="fruit-sprite w-8 h-8 sm:w-9 sm:h-9 rounded-full p-1 bg-white/90 border-2 ${fruit.bg.split(' ')[1]} shadow-md flex items-center justify-center relative">
+                        ${fruit.svg}
+                    </div>
+                `;
+
+                holder.appendChild(el);
+            });
+        }
+
+        // ==================== ENJIN PERLUMBAAN RAWAK (8 PEMENANG / PUSINGAN) ====================
+        function startRace() {
+            const activeRacers = state.participants.filter(p => !p.isEliminated);
+
+            if (state.raceStatus === 'RACING') {
+                return;
+            }
+
+            if (state.raceStatus === 'TOURNAMENT_OVER' || activeRacers.length === 0) {
+                showToast('🏁 Perlumbaan telah tamat! Sila klik "Reset Semua" atau "Masukkan Nama" baru.');
+                openAllWinnersOverlay();
+                return;
+            }
+
+            if (state.raceStatus === 'ROUND_OVER') {
+                proceedToNextRound();
+                return;
+            }
+
+            // Mulakan Perlumbaan Pusingan Semasa
+            state.raceStatus = 'RACING';
+            state.currentRoundWinners = [];
+            state.lastFrameTime = performance.now();
+
+            playStartFanfare();
+            updateStartButtonUI();
+
+            // Tambah kelas animasi berlari pada semua peserta aktif
+            activeRacers.forEach(r => {
+                const dom = document.getElementById(`dom-${r.id}`);
+                if (dom) dom.classList.add('racer-running');
+            });
+
+            state.animFrameId = requestAnimationFrame(raceLoop);
+        }
+
+        function raceLoop(now) {
+            if (state.raceStatus !== 'RACING') return;
+
+            const rawDt = Math.min((now - state.lastFrameTime) / 1000, 0.05);
+            state.lastFrameTime = now;
+
+            // Guna pengganda kelajuan 1x, 2x, atau 4x
+            const dt = rawDt * state.speedMultiplier;
+
+            const activeRacers = state.participants.filter(p => !p.isEliminated);
+            // Sasaran pemenang pusingan ini: 8 orang (atau semua baki jika kurang daripada 8)
+            const targetWinnersCount = Math.min(WINNERS_PER_ROUND, activeRacers.length);
+
+            let newlyFinishedThisFrame = false;
+
+            for (let i = 0; i < activeRacers.length; i++) {
+                const racer = activeRacers[i];
+                if (racer.roundRank !== null) continue; // Sudah sampai garisan penamat
+
+                // Kemas kini kelajuan rawak secara berkala supaya perlumbaan dramatik & adil
+                racer.burstTimer -= dt;
+                if (racer.burstTimer <= 0) {
+                    // Peluang pecutan ombak Hawaii (surge) atau larian santai
+                    const roll = Math.random();
+                    if (roll > 0.82) {
+                        racer.speed = 3.2 + Math.random() * 1.6; // Pecutan laju!
+                    } else if (roll < 0.2) {
+                        racer.speed = 0.7 + Math.random() * 0.6; // Perlahan seketika
+                    } else {
+                        racer.speed = 1.4 + Math.random() * 1.5; // Kelajuan biasa
+                    }
+                    racer.burstTimer = 0.25 + Math.random() * 0.55;
+                }
+
+                // Gerakkan progress menuju Level 15
+                racer.progress += racer.speed * dt;
+
+                // Semak jika mencapai Level 15 (Garisan Penamat)
+                if (racer.progress >= MAX_LEVELS) {
+                    racer.progress = MAX_LEVELS;
+                    racer.level = MAX_LEVELS;
+
+                    if (state.currentRoundWinners.length < targetWinnersCount) {
+                        const rank = state.currentRoundWinners.length + 1;
+                        racer.roundRank = rank;
+                        racer.wonRound = state.currentRound;
+                        state.currentRoundWinners.push(racer);
+                        newlyFinishedThisFrame = true;
+                        playWinnerChime(rank);
+                    }
+                } else {
+                    racer.level = Math.min(MAX_LEVELS, Math.floor(racer.progress) + 1);
+                }
+
+                // Kemas kini kedudukan DOM peserta
+                const dom = document.getElementById(`dom-${racer.id}`);
+                if (dom) {
+                    const leftPct = (racer.progress / MAX_LEVELS) * 94 + 3;
+                    dom.style.left = `${leftPct}%`;
+
+                    const badge = document.getElementById(`badge-${racer.id}`);
+                    if (badge) {
+                        if (racer.roundRank !== null) {
+                            badge.textContent = `#${racer.roundRank}`;
+                            badge.className = 'text-[9px] font-extrabold px-1.5 rounded bg-emerald-500 text-white shrink-0';
+                            dom.classList.remove('racer-running');
+                            dom.style.zIndex = 60 - racer.roundRank;
+                        } else {
+                            badge.textContent = `L${racer.level}`;
+                            if (racer.level >= 11) {
+                                badge.className = 'text-[9px] font-extrabold px-1 rounded bg-orange-500 text-white shrink-0';
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Kemas kini ticker Top 8 semasa secara langsung
+            updateLiveTopTicker(activeRacers);
+
+            // Semak jika sudah cukup 8 pemenang (atau semua baki peserta sudah tamat)
+            if (state.currentRoundWinners.length >= targetWinnersCount) {
+                completeCurrentRound();
+                return;
+            }
+
+            state.animFrameId = requestAnimationFrame(raceLoop);
+        }
+
+        /**
+         * Tamatkan pusingan semasa:
+         * 1. Tolak 8 pemenang daripada pusingan seterusnya (isEliminated = true).
+         * 2. Semak sama ada baki nama sudah tiada (0) walaupun belum mencapai Level 15.
+         * 3. Paparkan Overlay Senarai Pemenang.
+         */
+        function completeCurrentRound() {
+            cancelAnimationFrame(state.animFrameId);
+            state.animFrameId = null;
+
+            // Hentikan animasi berlari semua ikon
+            document.querySelectorAll('.racer-entity').forEach(el => el.classList.remove('racer-running'));
+
+            // Tolak pemenang pusingan ini daripada senarai peserta aktif pusingan seterusnya
+            state.currentRoundWinners.forEach(winner => {
+                winner.isEliminated = true;
+            });
+
+            // Simpan ke dalam rekod sejarah pemenang
+            state.allWinnersHistory.push({
+                round: state.currentRound,
+                winners: [...state.currentRoundWinners]
+            });
+
+            // Kira baki nama yang masih tinggal untuk pusingan seterusnya
+            const remainingCount = state.participants.filter(p => !p.isEliminated).length;
+
+            // Syarat Tamat Perlumbaan:
+            // Dikira tamat walaupun tidak mencapai Level/Pusingan 15 sekiranya baki nama sudah tiada!
+            if (remainingCount === 0) {
+                state.raceStatus = 'TOURNAMENT_OVER';
+                state.tournamentEndReason = state.currentRound < MAX_LEVELS
+                    ? 'NO_NAMES_BEFORE_15'
+                    : 'MAX_LEVEL_15';
+            } else if (state.currentRound >= MAX_LEVELS) {
+                state.raceStatus = 'TOURNAMENT_OVER';
+                state.tournamentEndReason = 'MAX_LEVEL_15';
+            } else {
+                state.raceStatus = 'ROUND_OVER';
+            }
+
+            playRoundCompleteSound();
+            updateHUDStats();
+            updateStartButtonUI();
+            showRoundWinnerOverlay(remainingCount);
+        }
+
+        function proceedToNextRound() {
+            const remainingCount = state.participants.filter(p => !p.isEliminated).length;
+            if (remainingCount === 0 || state.currentRound >= MAX_LEVELS) {
+                state.raceStatus = 'TOURNAMENT_OVER';
+                closeWinnerOverlay();
+                return;
+            }
+
+            state.currentRound++;
+            state.raceStatus = 'IDLE';
+            state.currentRoundWinners = [];
+
+            closeWinnerOverlay();
+            prepareRoundPositions();
+            renderRacersOnTrack();
+            updateHUDStats();
+            updateStartButtonUI();
+
+            document.getElementById('liveTopTicker').innerHTML =
+                `<span class="italic text-slate-500">Sedia untuk Pusingan ${state.currentRound}! Tekan "MULA PERLUMBAAN".</span>`;
+        }
+
+        // ==================== PAPARAN OVERLAY PEMENANG ====================
+        function showRoundWinnerOverlay(remainingCount) {
+            const overlay = document.getElementById('winnerOverlay');
+            const title = document.getElementById('overlayTitle');
+            const subtitle = document.getElementById('overlaySubtitle');
+            const emoji = document.getElementById('overlayEmoji');
+            const statusAlert = document.getElementById('overlayStatusAlert');
+            const statusText = document.getElementById('overlayStatusText');
+            const roundBadge = document.getElementById('overlayRoundBadge');
+            const winnersGrid = document.getElementById('overlayWinnersGrid');
+            const btnNextRound = document.getElementById('btnNextRound');
+            const btnFinishRestart = document.getElementById('btnFinishRestart');
+
+            const isTournamentOver = state.raceStatus === 'TOURNAMENT_OVER';
+
+            if (isTournamentOver) {
+                emoji.textContent = '🎉🏆🌴🏆🎉';
+                title.textContent = 'PERLUMBAAN HAWAII TAMAT!';
+
+                if (state.tournamentEndReason === 'NO_NAMES_BEFORE_15') {
+                    subtitle.textContent = `Semua nama peserta telah habis terpilih pada Pusingan/Level ${state.currentRound} (sebelum mencapai Level 15).`;
+                    statusAlert.className = 'mx-4 sm:mx-6 mt-4 rounded-2xl p-3 text-xs sm:text-sm font-bold flex items-center justify-between gap-2 bg-emerald-100 text-emerald-950 border-2 border-emerald-400';
+                    statusText.textContent = '✅ Baki nama untuk pusingan seterusnya: 0 orang (Tamat Awal Sebelum Level 15)';
+                } else {
+                    subtitle.textContent = 'Had maksimum Level 15 telah dicapai! Tahniah kepada semua pemenang.';
+                    statusAlert.className = 'mx-4 sm:mx-6 mt-4 rounded-2xl p-3 text-xs sm:text-sm font-bold flex items-center justify-between gap-2 bg-amber-100 text-amber-950 border-2 border-amber-400';
+                    statusText.textContent = `🏁 Tamat pada Level 15 • Baki tidak terpilih: ${remainingCount} orang`;
+                }
+
+                btnNextRound.classList.add('hidden');
+                btnFinishRestart.classList.remove('hidden');
+            } else {
+                emoji.textContent = '🏆🌺🏆';
+                title.textContent = `8 PEMENANG PUSINGAN ${state.currentRound}!`;
+                subtitle.textContent = 'Pemenang di bawah telah ditolak daripada senarai pusingan seterusnya.';
+                statusAlert.className = 'mx-4 sm:mx-6 mt-4 rounded-2xl p-3 text-xs sm:text-sm font-bold flex items-center justify-between gap-2 bg-sky-100 text-sky-900 border border-sky-300';
+                statusText.textContent = `🏄‍♂️ Baki peserta untuk Pusingan ${state.currentRound + 1}: ${remainingCount} orang`;
+
+                btnNextRound.classList.remove('hidden');
+                btnFinishRestart.classList.add('hidden');
+            }
+
+            roundBadge.textContent = `Level ${state.currentRound} / ${MAX_LEVELS}`;
+
+            // Paparkan kad setiap pemenang dalam pusingan ini
+            winnersGrid.innerHTML = state.currentRoundWinners.map(w => {
+                const fruit = HAWAII_FRUITS[w.fruitIdx];
+                const medal = w.roundRank === 1 ? '🥇' : w.roundRank === 2 ? '🥈' : w.roundRank === 3 ? '🥉' : '🌺';
+                return `
+                    <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-white border-2 border-amber-300 shadow-sm">
+                        <div class="w-8 h-8 rounded-xl bg-amber-400 text-amber-950 font-tropical font-extrabold text-sm flex items-center justify-center shrink-0">
+                            #${w.roundRank}
+                        </div>
+                        <div class="w-9 h-9 rounded-full p-1 border-2 ${fruit.bg} shrink-0">
+                            ${fruit.svg}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="font-extrabold text-sm text-slate-900 truncate">${escapeHtml(w.name)}</div>
+                            <div class="text-[11px] font-semibold text-slate-500">
+                                ${medal} Buah ${fruit.name} • Barisan ${w.lane + 1}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const totalWon = state.participants.filter(p => p.isEliminated).length;
+            document.getElementById('overlayTotalWinnersBtn').textContent = totalWon;
+
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+        }
+
+        function closeWinnerOverlay() {
+            const overlay = document.getElementById('winnerOverlay');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+
+        // ==================== OVERLAY REKOD KESELURUHAN PEMENANG ====================
+        function openAllWinnersOverlay() {
+            const modal = document.getElementById('allWinnersModal');
+            const content = document.getElementById('allWinnersContent');
+
+            if (state.allWinnersHistory.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center py-10 text-slate-400">
+                        <div class="text-4xl mb-2">🏝️</div>
+                        <p class="font-bold text-sm">Belum ada pemenang direkodkan lagi.</p>
+                        <p class="text-xs mt-1">Mulakan perlumbaan untuk mendapatkan 8 pemenang setiap pusingan!</p>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = state.allWinnersHistory.map(group => `
+                    <div class="rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-3.5">
+                        <div class="flex items-center justify-between mb-2.5 pb-1.5 border-b border-amber-200">
+                            <span class="font-tropical font-bold text-base text-amber-950">
+                                🌺 Pusingan / Level ${group.round}
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold">
+                                ${group.winners.length} Pemenang
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            ${group.winners.map(w => {
+                                const fruit = HAWAII_FRUITS[w.fruitIdx];
+                                return `
+                                    <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-xl border border-amber-200">
+                                        <span class="text-xs font-extrabold text-amber-700 w-6">#${w.roundRank}</span>
+                                        <div class="w-6 h-6 shrink-0">${fruit.svg}</div>
+                                        <span class="text-xs font-bold text-slate-800 truncate">${escapeHtml(w.name)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAllWinnersOverlay() {
+            const modal = document.getElementById('allWinnersModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // ==================== KAWALAN KELAJUAN 1x, 2x, 4x & HUD ====================
+        function setSpeed(mult) {
+            state.speedMultiplier = mult;
+            [1, 2, 4].forEach(val => {
+                const btn = document.getElementById(`speed-${val}`);
+                if (!btn) return;
+                if (val === mult) {
+                    btn.className = 'speed-btn px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition bg-amber-400 text-amber-950 shadow';
+                } else {
+                    btn.className = 'speed-btn px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition text-white hover:bg-white/15';
+                }
+            });
+            showToast(`⚡ Kelajuan ditetapkan kepada ${mult}x`);
+        }
+
+        function updateHUDStats() {
+            const remaining = state.participants.filter(p => !p.isEliminated).length;
+            const won = state.participants.filter(p => p.isEliminated).length;
+
+            document.getElementById('statRound').textContent = `${state.currentRound} / ${MAX_LEVELS}`;
+            document.getElementById('statRemaining').textContent = remaining;
+            document.getElementById('statWinnersCount').textContent = won;
+        }
+
+        function updateStartButtonUI() {
+            const btn = document.getElementById('btnStartRace');
+            const text = document.getElementById('btnStartText');
+
+            if (state.raceStatus === 'RACING') {
+                btn.disabled = true;
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+                text.textContent = 'SEDANG BERLUMBA...';
+            } else if (state.raceStatus === 'ROUND_OVER') {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                text.textContent = `PUSINGAN SETERUSNYA (${state.currentRound + 1})`;
+            } else if (state.raceStatus === 'TOURNAMENT_OVER') {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                text.textContent = 'PERLUMBAAN TAMAT';
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                text.textContent = 'MULA PERLUMBAAN';
+            }
+        }
+
+        function updateLiveTopTicker(activeRacers) {
+            const ticker = document.getElementById('liveTopTicker');
+            // Susun mengikut pemenang yang sudah sampai dahulu, kemudian progress tertinggi
+            const sorted = [...activeRacers].sort((a, b) => {
+                if (a.roundRank !== null && b.roundRank !== null) return a.roundRank - b.roundRank;
+                if (a.roundRank !== null) return -1;
+                if (b.roundRank !== null) return 1;
+                return b.progress - a.progress;
+            }).slice(0, 8);
+
+            ticker.innerHTML = sorted.map((r, idx) => {
+                const isDone = r.roundRank !== null;
+                return `
+                    <span class="px-2 py-0.5 rounded-lg border ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-slate-100 border-slate-200 text-slate-700'}">
+                        ${isDone ? `🏆#${r.roundRank}` : `${idx + 1}.`} ${escapeHtml(r.name)} (L${r.level})
+                    </span>
+                `;
+            }).join('');
+        }
+
+        // ==================== MODAL BULK INPUT HANDLERS ====================
+        function openBulkModal() {
+            if (state.raceStatus === 'RACING') {
+                showToast('⏳ Tunggu pusingan semasa tamat sebelum menukar senarai nama.');
+                return;
+            }
+            const modal = document.getElementById('bulkModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            updateBulkLineCount();
+        }
+
+        function closeBulkModal() {
+            const modal = document.getElementById('bulkModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function updateBulkLineCount() {
+            const raw = document.getElementById('bulkNamesInput').value;
+            const list = parseNamesFromText(raw);
+            document.getElementById('bulkLineCount').textContent = `${list.length} nama dikesan`;
+        }
+
+        function fillSampleNames(count) {
+            const chosen = [];
+            for (let i = 0; i < count; i++) {
+                const base = SAMPLE_POOL[i % SAMPLE_POOL.length];
+                chosen.push(i >= SAMPLE_POOL.length ? `${base} ${Math.floor(i / SAMPLE_POOL.length) + 1}` : base);
+            }
+            document.getElementById('bulkNamesInput').value = chosen.join('\n');
+            updateBulkLineCount();
+        }
+
+        function clearBulkTextarea() {
+            document.getElementById('bulkNamesInput').value = '';
+            updateBulkLineCount();
+        }
+
+        function applyBulkNames() {
+            const raw = document.getElementById('bulkNamesInput').value;
+            const names = parseNamesFromText(raw);
+            if (names.length === 0) {
+                showToast('⚠️ Sila masukkan sekurang-kurangnya satu nama peserta.');
+                return;
+            }
+            loadParticipants(names);
+            closeBulkModal();
+            showToast(`🌺 ${names.length} peserta berjaya dimuatkan ke 5 barisan!`);
+        }
+
+        function resetEntireTournament() {
+            if (state.participants.length === 0) return;
+            const originalNames = state.participants.map(p => p.name);
+            closeWinnerOverlay();
+            loadParticipants(originalNames);
+            document.getElementById('liveTopTicker').innerHTML =
+                `<span class="italic text-slate-500">Semua peserta telah ditetapkan semula ke Pusingan 1!</span>`;
+            showToast('🔄 Perlumbaan telah ditetapkan semula ke Pusingan 1!');
+        }
+
+        // ==================== SALIN KE CLIPBOARD (SAFE IFRAME FALLBACK) ====================
+        function copyTextSafe(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('📋 Senarai pemenang berjaya disalin!');
+            } catch (err) {
+                showToast('⚠️ Gagal menyalin teks.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function copyWinnersToClipboard() {
+            if (state.currentRoundWinners.length === 0) return;
+            const lines = [
+                `🏆 PEMENANG RACE HAWAII - PUSINGAN ${state.currentRound} 🏆`,
+                ...state.currentRoundWinners.map(w => `#${w.roundRank} - ${w.name} (${HAWAII_FRUITS[w.fruitIdx].name})`)
+            ];
+            copyTextSafe(lines.join('\n'));
+        }
+
+        function copyAllWinnersCumulative() {
+            if (state.allWinnersHistory.length === 0) {
+                showToast('⚠️ Tiada rekod pemenang untuk disalin.');
+                return;
+            }
+            const lines = ['🌺 REKOD KESELURUHAN PEMENANG RACE HAWAII 🌺'];
+            state.allWinnersHistory.forEach(group => {
+                lines.push(`\n--- Pusingan / Level ${group.round} ---`);
+                group.winners.forEach(w => {
+                    lines.push(`#${w.roundRank} ${w.name} (${HAWAII_FRUITS[w.fruitIdx].name})`);
+                });
+            });
+            copyTextSafe(lines.join('\n'));
+        }
+
+        // ==================== UTILITI RINGKAS ====================
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            msgEl.textContent = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2800);
+        }
+
+        // ==================== MULA APLIKASI PADA WINDOW LOAD ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            initTrackUI();
+
+            // Pantau perubahan input teks dalam modal bulk
+            document.getElementById('bulkNamesInput').addEventListener('input', updateBulkLineCount);
+
+            // Muatkan 24 nama contoh secara lalai supaya pengguna terus nampak trek hidup
+            const defaultSample = SAMPLE_POOL.slice(0, 24);
+            document.getElementById('bulkNamesInput').value = defaultSample.join('\n');
+            loadParticipants(defaultSample);
+        });
+    </script>
+</body>
+</html>
